@@ -14,7 +14,7 @@
             v-if="!isContentsValid"
             class="validation-text warning isContentTooLong"
           >
-            Contents length must be less than 250
+            컨텐츠 길이는 200글자 이내로 작성하세요.
           </p>
         </div>
         <button type="submit" class="btn">Edit</button>
