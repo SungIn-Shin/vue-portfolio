@@ -48,7 +48,6 @@ export default {
     // MainPage.vue     - /post/add     - insertMode: true
     // PostListItem.vue - /post/add/:id - insertMode: false
     this.postId = this.$route.params.id;
-    this.insertMode = isNull(this.postId);
 
     // 최초 입력모드가 아닐경우 게시글 정보를 받아온다.
     if (!this.insertMode) this.fetchPostData();
@@ -58,43 +57,59 @@ export default {
       return this.contents.length <= 200;
     },
   },
+  watch: {
+    // postId 값의 변화를 추적해서 mode를 수정한다.
+    postId: function (newVal) {
+      this.insertMode = isNull(newVal);
+    },
+  },
   methods: {
-    async submitForm() {
+    submitForm() {
+      if (this.insertMode) {
+        this.createPostData();
+      } else {
+        this.modPostData();
+        this.fetchPostData();
+      }
+    },
+    async createPostData() {
+      // 입력모드
       try {
-        if (this.insertMode) {
-          this.createPostData();
-        } else {
-          this.modPostData();
-          this.fetchPostData();
-        }
+        const response = await createPost({
+          title: this.title,
+          contents: this.contents,
+        });
+        this.postId = response.data.data._id;
+
+        this.changeMode(false, '입력성공');
       } catch (error) {
         console.log(error.response.data.message);
         this.logMessage = error.response.data.message;
       }
     },
-    async createPostData() {
-      // 입력모드
-      const response = await createPost({
-        title: this.title,
-        contents: this.contents,
-      });
-      this.postId = response.data.data._id;
-
-      this.changeMode(false, '입력성공');
-    },
     async fetchPostData() {
-      const { data } = await fetchPost(this.postId);
-      this.title = data.title;
-      this.contents = data.contents;
+      try {
+        const { data } = await fetchPost(this.postId);
+        this.title = data.title;
+        this.contents = data.contents;
+      } catch (error) {
+        console.log(error.response.data.message);
+        this.logMessage = error.response.data.message;
+      }
     },
     async modPostData() {
       // 수정모드
-      await editPost(this.postId, {
-        title: this.title,
-        contents: this.contents,
-      });
+      try {
+        await editPost(this.postId, {
+          title: this.title,
+          contents: this.contents,
+        });
 
-      this.changeMode(false, '수정성공!');
+        this.changeMode(false, '수정성공!');
+      } catch (error) {
+        console.log(error.response.data.message);
+        this.logMessage = error.response.data.message;
+      }
     },
     changeMode(mode, logMessage) {
       this.insertMode = mode;
