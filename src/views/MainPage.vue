@@ -13,9 +13,9 @@
         ></PostListItem>
       </ul>
     </div>
-    <router-link to="/add" class="create-button">
-      <i class="ion-md-add"></i>
-    </router-link>
+    <button class="create-button">
+      <i class="ion-md-add" @click="routeEditPage"></i>
+    </button>
   </div>
 </template>
 
@@ -48,6 +48,10 @@ export default {
       const { data } = await fetchPosts();
       this.isLoading = false;
       this.postItems = data.posts;
+    },
+    routeEditPage() {
+      console.log('call routeEditPage');
+      this.$router.push(`/post/add`);
     },
   },
   created() {

@@ -34,7 +34,7 @@ export default {
     },
     routeEditPage() {
       const id = this.postItem._id;
-      this.$router.push(`/post/${id}`);
+      this.$router.push(`/post/edit/${id}`);
     },
   },
   computed: {
