@@ -48,7 +48,7 @@ export default {
     // MainPage.vue     - /post/add     - insertMode: true
     // PostListItem.vue - /post/add/:id - insertMode: false
     this.postId = this.$route.params.id;
-
+    this.insertMode = isNull(this.postId);
     // 최초 입력모드가 아닐경우 게시글 정보를 받아온다.
     if (!this.insertMode) this.fetchPostData();
   },
@@ -81,7 +81,7 @@ export default {
         });
         this.postId = response.data.data._id;
 
-        this.changeMode(false, '입력성공');
+        this.$router.push(`/post/edit/${this.postId}`);
       } catch (error) {
         console.log(error.response.data.message);
         this.logMessage = error.response.data.message;
