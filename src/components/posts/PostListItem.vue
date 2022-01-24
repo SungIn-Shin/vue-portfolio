@@ -39,9 +39,7 @@ export default {
   },
   computed: {
     isPostItemsEmpty() {
-      console.log('CAL:L');
       const returnData = this.postItem !== null ? true : false;
-      console.log('Consol log : ' + returnData);
       return returnData;
     },
   },

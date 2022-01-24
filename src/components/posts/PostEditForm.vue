@@ -20,11 +20,14 @@
         </div>
         <button v-if="insertMode" type="submit" class="btn">Create</button>
         <button v-else type="submit" class="btn">Edit</button>
-        <!-- <button type="button" class="btn" @click="goToMain">Main</button> -->
+        <button type="button" class="btn" @click="goToPost">
+          특정게시글열기
+        </button>
       </form>
       <p class="log">
         {{ logMessage }}
       </p>
+      <p class="log">{{ postId }}</p>
     </div>
   </div>
 </template>
@@ -48,19 +51,37 @@ export default {
     // MainPage.vue     - /post/add     - insertMode: true
     // PostListItem.vue - /post/add/:id - insertMode: false
     this.postId = this.$route.params.id;
-    this.insertMode = isNull(this.postId);
-    // 최초 입력모드가 아닐경우 게시글 정보를 받아온다.
-    if (!this.insertMode) this.fetchPostData();
   },
   computed: {
     isContentsValid() {
-      return this.contents.length <= 200;
+      if (!isNull(this.contents)) return this.contents.length <= 200;
+      return false;
     },
   },
   watch: {
+    $route(to) {
+      // $route(to, from) {
+      // to : 현재 호출된 route
+      // from : 호출한 route
+      // 브라우저에서 페이지 앞뒤로 이동할 때 $route 를 감지해야 이동할 때마다 게시글 정보가 바뀜
+
+      // console.log('$route watch------- to start');
+      // console.log(to);
+      // console.log('$route watch------- to end');
+
+      // console.log(to.params.id);
+
+      // console.log('$route watch------- from start');
+      // console.log(from);
+      // console.log('$route watch------- from end');
+      // console.log(from.params.id);
+
+      this.postId = to.params.id;
+    },
     // postId 값의 변화를 추적해서 mode를 수정한다.
     postId: function (newVal) {
       this.insertMode = isNull(newVal);
+      if (!this.insertMode) this.fetchPostData();
     },
   },
   methods: {
@@ -69,7 +90,6 @@ export default {
         this.createPostData();
       } else {
         this.modPostData();
-        this.fetchPostData();
       }
     },
     async createPostData() {
@@ -105,6 +125,7 @@ export default {
           contents: this.contents,
         });
 
+        this.fetchPostData();
         this.changeMode(false, '수정성공!');
       } catch (error) {
         console.log(error.response.data.message);
@@ -115,10 +136,23 @@ export default {
       this.insertMode = mode;
       this.logMessage = logMessage;
     },
-    goToMain() {
-      this.$router.push(`/main`);
+    goToPost() {
+      // 특정 게시글을 지정함.
+      this.postId = '61e5154859be5642536311ec';
+      // 동일한 instance 를 생성할 때 NavigationDuplicated: Avoided redundant navigation to current location
+      // exception이 발생하는데 해당 오류를 무시한다.
+      // watch 에서 postId를 변경감지 하고있기 때문에 화면의 데이터는 지정한 postId로 불러와서 갱신 함.
+      // 아래 로직은 변경감지 후 데이터는 바뀌지만 url은 변경되지 않기 때문에 exception 을 무시하여 url의 postId 값을 바꿔주도록 구현
+      // 다른 exception 의 발생시 파악하기 힘드므로 'NavigationDuplicated' 에서만 반응하도록 구현.
+      this.$router.push(`/post/edit/${this.postId}`).catch(err => {
+        if (!err.name == 'NavigationDuplicated') throw err;
+      });
     },
   },
+  beforeMount() {},
+  mounted() {},
+  beforeUpdate() {},
+  updated() {},
 };
 </script>
 
