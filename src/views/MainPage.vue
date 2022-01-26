@@ -12,6 +12,9 @@
           <input id="contents" type="text" v-model="searchContents" />
         </div>
         <button type="submit" class="btn" @click="searchForm">검색</button>
+        <button type="button" class="btn" @click="clearSearchForm">
+          초기화
+        </button>
       </div>
     </div>
     <div class="main list-container contents">
@@ -45,7 +48,7 @@ export default {
       isLoading: false,
       searchTitle: '',
       searchContents: '',
-      dumySearchData: [
+      dummyList: [
         {
           _id: '61e5154859be5642536311ec1',
           title: '조회용 데이터1111',
@@ -92,12 +95,11 @@ export default {
       ) {
         this.isLoading = true;
         const { data } = await fetchPosts();
-        console.log(data);
         this.isLoading = false;
         this.postItems = data.posts;
       } else {
-        // 조회용 데이터...
-        this.postItems = this.dumySearchData;
+        // 검색용 api 호출.. 대신 dummy 데이터 보여줌
+        this.postItems = this.dummyList;
       }
     },
     routeEditPage() {
@@ -105,33 +107,42 @@ export default {
       this.$router.push(`/post/add`);
     },
     searchForm() {
-      if (!isNull(this.searchTitle) && !isNull(this.searchContents)) {
-        this.$router
-          .push(
-            `/main/title/${this.searchTitle}/contents/${this.searchContents}`,
-          )
-          .catch(err => {
-            if (!err.name == 'NavigationDuplicated') throw err;
-          });
-      } else {
-        this.$router.push('/main').catch(err => {
+      // 예쁘게 어떻게 만들까...
+      const searchQueryString = {};
+      if (!isNull(this.searchTitle)) {
+        searchQueryString.title = this.searchTitle;
+      }
+      if (!isNull(this.searchContents)) {
+        searchQueryString.contents = this.searchContents;
+      }
+
+      this.$router
+        .push({
+          name: 'main',
+          query: searchQueryString,
+        })
+        .catch(err => {
           if (!err.name == 'NavigationDuplicated') throw err;
         });
-      }
+    },
+    clearSearchForm() {
+      this.searchTitle = '';
+      this.searchContents = '';
+      this.searchForm();
     },
   },
   created() {
     //
+    this.searchTitle = this.$route.query.title;
+    this.searchContents = this.$route.query.contents;
     this.fetchData();
   },
   watch: {
     //
     $route(to) {
       //
-      console.log('title : ' + to.params.title);
-      console.log('contents : ' + to.params.contents);
-      this.searchTitle = to.params.title;
-      this.searchContents = to.params.contents;
+      this.searchTitle = to.query.title;
+      this.searchContents = to.query.contents;
       this.fetchData();
     },
   },

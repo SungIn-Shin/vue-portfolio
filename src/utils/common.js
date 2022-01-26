@@ -5,7 +5,7 @@
  *          obj it not null : false
  */
 export function isNull(obj) {
-  if (obj == '' || obj == null || obj == undefined || obj == 'undefined')
+  if (obj == '' || obj == null || obj == undefined || typeof obj == 'undefined')
     return true;
   else return false;
 }

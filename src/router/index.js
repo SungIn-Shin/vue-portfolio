@@ -21,11 +21,7 @@ const router = new VueRouter({
     },
     {
       path: '/main',
-      component: () => import('@/views/MainPage.vue'),
-      meta: { auth: true },
-    },
-    {
-      path: '/main/title/:title/contents/:contents',
+      name: 'main',
       component: () => import('@/views/MainPage.vue'),
       meta: { auth: true },
     },
