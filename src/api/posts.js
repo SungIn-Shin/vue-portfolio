@@ -6,6 +6,8 @@ function fetchPosts() {
   return posts.get('/');
 }
 
+// 특정 노트 데이터 목록을 조회하는 API
+
 // 특정 학습 노트를 조회하는 API
 function fetchPost(postId) {
   return posts.get(postId);

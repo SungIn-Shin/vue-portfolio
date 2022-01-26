@@ -25,6 +25,11 @@ const router = new VueRouter({
       meta: { auth: true },
     },
     {
+      path: '/main/title/:title/contents/:contents',
+      component: () => import('@/views/MainPage.vue'),
+      meta: { auth: true },
+    },
+    {
       path: '/post/add',
       component: () => import('@/views/PostEditPage.vue'),
       meta: { auth: true },

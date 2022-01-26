@@ -187,3 +187,20 @@ a:hover {
 	background: #fe9616;
 	border: 3px solid white;
 }
+
+/* search */
+
+.search-contents {
+	max-width: 1020px;
+	margin: 0 auto;
+  padding: 0 5px;
+  width: 100%;  
+}
+
+.search-form-wrapper {
+  background: white;
+  -webkit-box-shadow: 0 20px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  padding: 15px 15px;
+}
